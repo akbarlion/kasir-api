@@ -26,7 +26,7 @@ definitions:
       stock:
         type: integer
     type: object
-host: localhost:8080
+host: kasir-api-production-ebf5.up.railway.app
 info:
   contact:
     email: support@swagger.io
