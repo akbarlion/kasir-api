@@ -15,7 +15,34 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 }
 
 func (repo *ProductRepository) GetAll() ([]models.Product, error) {
-	query := "SELECT id, name, price, stock FROM product"
+	// query := "SELECT id, name, price, stock FROM product"
+	// rows, err := repo.db.Query(query)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer rows.Close()
+
+	// products := make([]models.Product, 0)
+	// for rows.Next() {
+	// 	var p models.Product
+	// 	err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Stock)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	products = append(products, p)
+	// }
+	// return products, nil
+
+	/*
+		Update queries while joining categories table
+	*/
+	query := `
+        SELECT p.id, p.name, p.price, p.stock, p.category_id, 
+               COALESCE(c.name, '') as category_name, 
+               COALESCE(c.description, '') as category_description 
+        FROM product p 
+        LEFT JOIN category c ON p.category_id = c.id`
+
 	rows, err := repo.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -25,40 +52,95 @@ func (repo *ProductRepository) GetAll() ([]models.Product, error) {
 	products := make([]models.Product, 0)
 	for rows.Next() {
 		var p models.Product
-		err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Stock)
+
+		err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Stock, &p.CategoryID, &p.CategoryName, &p.CategoryDescription)
 		if err != nil {
 			return nil, err
 		}
+
 		products = append(products, p)
 	}
 	return products, nil
 }
 
 func (repo *ProductRepository) Create(product *models.Product) error {
-	query := "INSERT INTO product (name, price, stock) VALUES ($1, $2, $3) RETURNING id"
-	err := repo.db.QueryRow(query, product.Name, product.Price, product.Stock).Scan(&product.ID)
+	// query := "INSERT INTO product (name, price, stock) VALUES ($1, $2, $3) RETURNING id"
+	// err := repo.db.QueryRow(query, product.Name, product.Price, product.Stock).Scan(&product.ID)
+	// return err
+
+	/*
+		update queries while joining categories table
+	*/
+
+	query := "INSERT INTO product (name, price, stock, category_id) VALUES ($1, $2, $3, $4) RETURNING id"
+	err := repo.db.QueryRow(query, product.Name, product.Price, product.Stock, product.CategoryID).Scan(&product.ID)
 	return err
 }
 
 // Product GetByID
 func (repo *ProductRepository) GetByID(id int) (*models.Product, error) {
-	query := "SELECT id, name, price, stock FROM product WHERE id = $1"
+	// query := "SELECT id, name, price, stock FROM product WHERE id = $1"
+
+	// var p models.Product
+	// err := repo.db.QueryRow(query, id).Scan(&p.ID, &p.Name, &p.Price, &p.Stock)
+	// if err == sql.ErrNoRows {
+	// 	return nil, errors.New("Produk tidak ditemukan")
+	// }
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return &p, nil
+
+	/*
+		update query while to joining categories table
+	*/
+	query := `
+        SELECT p.id, p.name, p.price, p.stock, p.category_id, 
+               COALESCE(c.name, '') as category_name, 
+               COALESCE(c.description, '') as category_description 
+        FROM product p 
+        LEFT JOIN category c ON p.category_id = c.id 
+        WHERE p.id = $1`
 
 	var p models.Product
-	err := repo.db.QueryRow(query, id).Scan(&p.ID, &p.Name, &p.Price, &p.Stock)
+
+	err := repo.db.QueryRow(query, id).Scan(
+		&p.ID, &p.Name, &p.Price, &p.Stock, &p.CategoryID, &p.CategoryName, &p.CategoryDescription)
+
 	if err == sql.ErrNoRows {
 		return nil, errors.New("Produk tidak ditemukan")
 	}
 	if err != nil {
 		return nil, err
 	}
+
 	return &p, nil
 }
 
 // Update Produk
 func (repo *ProductRepository) Update(product *models.Product) error {
-	query := "UPDATE product SET name = $1, price = $2, stock = $3 WHERE id = $4"
-	result, err := repo.db.Exec(query, product.Name, product.Price, product.Stock, product.ID)
+	// query := "UPDATE product SET name = $1, price = $2, stock = $3 WHERE id = $4"
+	// result, err := repo.db.Exec(query, product.Name, product.Price, product.Stock, product.ID)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// rows, err := result.RowsAffected()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// if rows == 0 {
+	// 	return errors.New("produk tidak ditemukan")
+	// }
+
+	// return nil
+
+	/*
+		update queries while joining category table
+	*/
+	query := "UPDATE product SET name = $1, price = $2, stock = $3, category_id = $4 WHERE id = $5"
+	result, err := repo.db.Exec(query, product.Name, product.Price, product.Stock, product.CategoryID, product.ID)
 	if err != nil {
 		return err
 	}
