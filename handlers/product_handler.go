@@ -29,6 +29,15 @@ func (h *ProductHandler) HandleProducts(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+// GetAll godoc
+// @Summary Get all products
+// @Description Get all products with category information
+// @Tags products
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Product
+// @Failure 500 {object} map[string]string
+// @Router /products [get]
 func (h *ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	products, err := h.service.GetAll()
 	if err != nil {
@@ -40,7 +49,16 @@ func (h *ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(products)
 }
 
-// handler Create Product
+// Create godoc
+// @Summary Create a new product
+// @Description Create a new product with category_id
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param product body models.Product true "Product data"
+// @Success 201 {object} models.Product
+// @Failure 400 {object} map[string]string
+// @Router /products [post]
 func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
@@ -74,7 +92,17 @@ func (h *ProductHandler) ProductByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetByID - Get /api/products/{id}
+// GetByID godoc
+// @Summary Get product by ID
+// @Description Get a single product by ID with category information
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path int true "Product ID"
+// @Success 200 {object} models.Product
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /products/{id} [get]
 func (h *ProductHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/products/")
 	id, err := strconv.Atoi(idStr)
@@ -93,7 +121,17 @@ func (h *ProductHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
-// Update Produk - PUT /api/products/{id}
+// Update godoc
+// @Summary Update product
+// @Description Update an existing product by ID
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path int true "Product ID"
+// @Param product body models.Product true "Product data"
+// @Success 200 {object} models.Product
+// @Failure 400 {object} map[string]string
+// @Router /products/{id} [put]
 func (h *ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/products/")
 	id, err := strconv.Atoi(idStr)
@@ -120,7 +158,17 @@ func (h *ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
-// Delete - DELETE /api/products/{id}
+// Delete godoc
+// @Summary Delete product
+// @Description Delete a product by ID
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path int true "Product ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /products/{id} [delete]
 func (h *ProductHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/products/")
 	id, err := strconv.Atoi(idStr)

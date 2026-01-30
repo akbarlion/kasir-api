@@ -28,6 +28,15 @@ func (h *CategoryHandler) HandleCategories(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// GetAll godoc
+// @Summary Get all categories
+// @Description Get all categories
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Category
+// @Failure 500 {object} map[string]string
+// @Router /category [get]
 func (h CategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	categories, err := h.service.GetAll()
 	if err != nil {
@@ -39,6 +48,16 @@ func (h CategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(categories)
 }
 
+// Create godoc
+// @Summary Create a new category
+// @Description Create a new category
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param category body models.Category true "Category data"
+// @Success 201 {object} models.Category
+// @Failure 400 {object} map[string]string
+// @Router /category [post]
 func (h CategoryHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var category models.Category
 	err := json.NewDecoder(r.Body).Decode(&category)
@@ -70,7 +89,17 @@ func (h CategoryHandler) CategoryByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GET By ID - GET /api/category/{id}
+// GetByID godoc
+// @Summary Get category by ID
+// @Description Get a single category by ID
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param id path int true "Category ID"
+// @Success 200 {object} models.Category
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /category/{id} [get]
 func (h CategoryHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/category/")
 	id, err := strconv.Atoi(idStr)
@@ -89,7 +118,17 @@ func (h CategoryHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(category)
 }
 
-// Update - PUT /api/category/{id}
+// Update godoc
+// @Summary Update category
+// @Description Update an existing category by ID
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param id path int true "Category ID"
+// @Param category body models.Category true "Category data"
+// @Success 200 {object} models.Category
+// @Failure 400 {object} map[string]string
+// @Router /category/{id} [put]
 func (h CategoryHandler) Update(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/category/")
 	id, err := strconv.Atoi(idStr)
@@ -116,7 +155,16 @@ func (h CategoryHandler) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(category)
 }
 
-// Delete - DELETE /api/category/{id}
+// Delete godoc
+// @Summary Delete category
+// @Description Delete a category by ID
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param id path int true "Category ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Router /category/{id} [delete]
 func (h CategoryHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/category/")
 	id, err := strconv.Atoi(idStr)

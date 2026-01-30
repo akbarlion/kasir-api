@@ -13,7 +13,23 @@ import (
 	"strings"
 
 	"github.com/spf13/viper"
+	_ "kasir-api/docs" // Import generated docs
 )
+
+// @title Kasir API
+// @version 1.0
+// @description API untuk sistem kasir dengan manajemen produk dan kategori
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api
 
 type Config struct {
 	Port   string `mapstructure:"PORT"`
@@ -65,9 +81,20 @@ func main() {
 	http.HandleFunc("/api/category", categoryHandler.HandleCategories)
 	http.HandleFunc("/api/category/", categoryHandler.CategoryByID)
 
+	// Swagger documentation routes
+	http.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./docs/"))))
+	http.HandleFunc("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./docs/swagger.json")
+	})
+
+	// Root route redirect to swagger
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/swagger/", http.StatusMovedPermanently)
+	})
+
 	err = http.ListenAndServe(":"+config.Port, nil)
 	if err != nil {
-		fmt.Println("Gagal running server")
+		log.Fatal("Gagal running server:", err)
 	}
 
 }
