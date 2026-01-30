@@ -15,7 +15,7 @@ func NewCategoryRepository(db *sql.DB) *CategoryRepository {
 }
 
 func (repo *CategoryRepository) GetAll() ([]models.Category, error) {
-	query := "SELECT id, name, description FROM category"
+	query := "SELECT id, name, COALESCE(description, '') FROM category"
 	rows, err := repo.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (repo *CategoryRepository) Create(data *models.Category) error {
 
 // Category GetByID
 func (repo *CategoryRepository) GetByID(id int) (*models.Category, error) {
-	query := "SELECT id, name, description FROM category WHERE id = $1"
+	query := "SELECT id, name, COALESCE(description, '') FROM category WHERE id = $1"
 
 	var c models.Category
 	err := repo.db.QueryRow(query, id).Scan(&c.ID, &c.Name, &c.Description)
