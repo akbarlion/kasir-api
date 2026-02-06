@@ -75,12 +75,16 @@ func main() {
 	categoryRepo := repositories.NewCategoryRepository(db)
 	categoryService := services.NewCategoryService(categoryRepo)
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
+	transactionRepo := repositories.NewTransactionRepository(db)
+	transactionService := services.NewTransactionService(transactionRepo)
+	transactionHandler := handlers.NewTransactionHandler(transactionService)
 
 	// Register routes
 	http.HandleFunc("/api/products", productHandler.HandleProducts)
 	http.HandleFunc("/api/products/", productHandler.ProductByID)
 	http.HandleFunc("/api/category", categoryHandler.HandleCategories)
 	http.HandleFunc("/api/category/", categoryHandler.CategoryByID)
+	http.HandleFunc("/api/checkout/", transactionHandler.HandleCheckout)
 
 	// Swagger documentation routes
 	http.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./docs/"))))
