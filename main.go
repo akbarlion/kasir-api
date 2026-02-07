@@ -29,7 +29,7 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host kasir-api-production-ebf5.up.railway.app
+// @host kasir-api-production-8d59.up.railway.app
 // @BasePath /api
 
 type Config struct {
