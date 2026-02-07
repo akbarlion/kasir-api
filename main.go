@@ -78,6 +78,9 @@ func main() {
 	transactionRepo := repositories.NewTransactionRepository(db)
 	transactionService := services.NewTransactionService(transactionRepo)
 	transactionHandler := handlers.NewTransactionHandler(transactionService)
+	reportRepo := repositories.NewReportRepository(db)
+	reportService := services.NewReportService(reportRepo)
+	reportHandler := handlers.NewReportHandler(reportService)
 
 	// Register routes
 	http.HandleFunc("/api/products", productHandler.HandleProducts)
@@ -85,6 +88,8 @@ func main() {
 	http.HandleFunc("/api/category", categoryHandler.HandleCategories)
 	http.HandleFunc("/api/category/", categoryHandler.CategoryByID)
 	http.HandleFunc("/api/checkout/", transactionHandler.HandleCheckout)
+	http.HandleFunc("/api/report/hari-ini", reportHandler.HandleReport)
+	http.HandleFunc("/api/report", reportHandler.HandleReport)
 
 	// Swagger documentation routes
 	http.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./docs/"))))
