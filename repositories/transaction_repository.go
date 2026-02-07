@@ -30,7 +30,7 @@ func (repo *TransactionRepository) CreateTransaction(items []models.CheckoutItem
 		var productPrice, stock int
 		var productName string
 
-		err := tx.QueryRow("SELECT name, price, stock FROM product WHERE id = $1, item.ProductID").Scan(&productName, &productPrice, &stock)
+		err := tx.QueryRow("SELECT name, price, stock FROM product WHERE id = $1", item.ProductID).Scan(&productName, &productPrice, &stock)
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("product id %d not found", item.ProductID)
 		}
