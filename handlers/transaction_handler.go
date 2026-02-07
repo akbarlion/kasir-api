@@ -15,6 +15,17 @@ func NewTransactionHandler(service *services.TransactionService) *TransactionHan
 	return &TransactionHandler{service: service}
 }
 
+// HandleCheckout godoc
+// @Summary Checkout transaction
+// @Description Create new transaction with items
+// @Tags Transaction
+// @Accept json
+// @Produce json
+// @Param request body models.CheckoutRequest true "Checkout Request"
+// @Success 200 {object} models.Transaction
+// @Failure 400 {string} string "Invalid request body"
+// @Failure 500 {string} string "Internal server error"
+// @Router /checkout/ [post]
 func (h *TransactionHandler) HandleCheckout(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
